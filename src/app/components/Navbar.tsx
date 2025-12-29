@@ -32,7 +32,7 @@ export default function Navbar() {
           href="/"
           className="text-lg font-bold text-purple-500 hover:text-purple-400 hover:drop-shadow-[0_0_8px_rgba(168,85,247,0.7)] transition"
         >
-          Ernest.dev
+          Ernest DIKOUM
         </Link>
 
         {/* Desktop links */}

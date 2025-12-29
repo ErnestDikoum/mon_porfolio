@@ -1,8 +1,25 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState } from 'react';
+import { motion, AnimatePresence } from "framer-motion";
+import { X } from 'lucide-react';
 
 export default function About() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleDownload = (language: string) => {
+    const cvFile = language === 'fr' ? '/ErnestDikoum_CV_FR.pdf' : '/ErnestDikoum_CV_EN.pdf';
+    
+    const link = document.createElement('a');
+    link.href = cvFile;
+    link.download = cvFile.split('/').pop() || 'CV.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    setIsModalOpen(false);
+  };
+
   return (
     <section
       id="about"
@@ -51,18 +68,79 @@ export default function About() {
 
           {/* Bouton centré et un peu plus bas */}
           <div className="flex justify-center mt-8">
-            <motion.a
-              href="/ErnestDikoum_CV.pdf"
-              download
+            <motion.button
+              onClick={() => setIsModalOpen(true)}
               className="px-8 py-4 bg-purple-400 text-gray-900 font-semibold rounded-lg shadow-lg hover:bg-purple-500 transition-colors"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
               Télécharger mon CV
-            </motion.a>
+            </motion.button>
           </div>
         </motion.div>
       </div>
+
+      {/* Modale */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsModalOpen(false)}
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center"
+          >
+            {/* Contenu de la modale */}
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4 relative"
+            >
+              {/* Bouton fermer */}
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              >
+                <X size={24} />
+              </button>
+
+              {/* Titre */}
+              <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+                Choisissez la langue
+              </h3>
+
+              {/* Options de téléchargement */}
+              <div className="grid grid-cols-2 gap-4">
+                {/* Version Française */}
+                <motion.button
+                  onClick={() => handleDownload('fr')}
+                  className="flex flex-col items-center justify-center p-6 bg-purple-100 rounded-lg hover:bg-purple-200 transition-colors"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <span className="text-4xl mb-2">🇫🇷</span>
+                  <span className="text-lg font-semibold text-gray-900">Version</span>
+                  <span className="text-lg font-semibold text-gray-900">Française</span>
+                </motion.button>
+
+                {/* Version Anglaise */}
+                <motion.button
+                  onClick={() => handleDownload('en')}
+                  className="flex flex-col items-center justify-center p-6 bg-purple-100 rounded-lg hover:bg-purple-200 transition-colors"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <span className="text-4xl mb-2">🇬🇧</span>
+                  <span className="text-lg font-semibold text-gray-900">English</span>
+                  <span className="text-lg font-semibold text-gray-900">Version</span>
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
